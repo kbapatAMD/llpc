@@ -109,7 +109,11 @@ Result ConfigBuilder::BuildPipelineVsFsRegConfig(
 
     const uint32_t stageMask = pContext->GetShaderStageMask();
 
-    uint64_t hash64 = 0;
+#if LLPC_CLIENT_INTERFACE_MAJOR_VERSION >= 35
+    ShaderHash hash = {};
+#else
+    ShaderHash hash = 0;
+#endif
 
     uint8_t* pAllocBuf = new uint8_t[sizeof(PipelineVsFsRegConfig)];
     PipelineVsFsRegConfig* pConfig = reinterpret_cast<PipelineVsFsRegConfig*>(pAllocBuf);
@@ -130,8 +134,8 @@ Result ConfigBuilder::BuildPipelineVsFsRegConfig(
 
         SET_REG_FIELD(pConfig, VGT_SHADER_STAGES_EN, VS_EN, VS_STAGE_REAL);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageVertex);
-        SetShaderHash(ShaderStageVertex, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageVertex);
+        SetShaderHash(ShaderStageVertex, hash);
 
 #if PAL_CLIENT_INTERFACE_MAJOR_VERSION < 473
         const auto pIntfData = pContext->GetShaderInterfaceData(ShaderStageVertex);
@@ -151,8 +155,8 @@ Result ConfigBuilder::BuildPipelineVsFsRegConfig(
     {
         result = BuildPsRegConfig<PipelineVsFsRegConfig>(pContext, ShaderStageFragment, pConfig);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageFragment);
-        SetShaderHash(ShaderStageFragment, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageFragment);
+        SetShaderHash(ShaderStageFragment, hash);
     }
 
     // Set up IA_MULTI_VGT_PARAM
@@ -180,7 +184,11 @@ Result ConfigBuilder::BuildPipelineVsTsFsRegConfig(
     Result result = Result::Success;
     const uint32_t stageMask = pContext->GetShaderStageMask();
 
-    uint64_t hash64 = 0;
+#if LLPC_CLIENT_INTERFACE_MAJOR_VERSION >= 35
+    ShaderHash hash = {};
+#else
+    ShaderHash hash = 0;
+#endif
 
     uint8_t* pAllocBuf = new uint8_t[sizeof(PipelineVsTsFsRegConfig)];
     PipelineVsTsFsRegConfig* pConfig = reinterpret_cast<PipelineVsTsFsRegConfig*>(pAllocBuf);
@@ -201,8 +209,9 @@ Result ConfigBuilder::BuildPipelineVsTsFsRegConfig(
 
         SET_REG_FIELD(pConfig, VGT_SHADER_STAGES_EN, LS_EN, LS_STAGE_ON);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageVertex);
-        SetShaderHash(ShaderStageVertex, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageVertex);
+        SetShaderHash(ShaderStageVertex, hash);
+
 #if PAL_CLIENT_INTERFACE_MAJOR_VERSION < 473
         const auto pIntfData = pContext->GetShaderInterfaceData(ShaderStageVertex);
         if (pIntfData->vbTable.resNodeIdx != InvalidValue)
@@ -218,8 +227,8 @@ Result ConfigBuilder::BuildPipelineVsTsFsRegConfig(
 
         SET_REG_FIELD(pConfig, VGT_SHADER_STAGES_EN, HS_EN, HS_STAGE_ON);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageTessControl);
-        SetShaderHash(ShaderStageTessControl, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageTessControl);
+        SetShaderHash(ShaderStageTessControl, hash);
     }
 
     if ((result == Result::Success) && (stageMask & ShaderStageToMask(ShaderStageTessEval)))
@@ -228,8 +237,8 @@ Result ConfigBuilder::BuildPipelineVsTsFsRegConfig(
 
         SET_REG_FIELD(pConfig, VGT_SHADER_STAGES_EN, VS_EN, VS_STAGE_DS);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageTessEval);
-        SetShaderHash(ShaderStageTessEval, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageTessEval);
+        SetShaderHash(ShaderStageTessEval, hash);
 
 #if PAL_CLIENT_INTERFACE_MAJOR_VERSION < 473
         const auto pIntfData = pContext->GetShaderInterfaceData(ShaderStageTessEval);
@@ -244,8 +253,8 @@ Result ConfigBuilder::BuildPipelineVsTsFsRegConfig(
     {
         result = BuildPsRegConfig<PipelineVsTsFsRegConfig>(pContext, ShaderStageFragment, pConfig);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageFragment);
-        SetShaderHash(ShaderStageFragment, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageFragment);
+        SetShaderHash(ShaderStageFragment, hash);
     }
 
     if (pContext->IsTessOffChip())
@@ -288,7 +297,11 @@ Result ConfigBuilder::BuildPipelineVsGsFsRegConfig(
 
     const uint32_t stageMask = pContext->GetShaderStageMask();
 
-    uint64_t hash64 = 0;
+#if LLPC_CLIENT_INTERFACE_MAJOR_VERSION >= 35
+    ShaderHash hash = {};
+#else
+    ShaderHash hash = 0;
+#endif
 
     uint8_t* pAllocBuf = new uint8_t[sizeof(PipelineVsGsFsRegConfig)];
     PipelineVsGsFsRegConfig* pConfig = reinterpret_cast<PipelineVsGsFsRegConfig*>(pAllocBuf);
@@ -309,8 +322,9 @@ Result ConfigBuilder::BuildPipelineVsGsFsRegConfig(
 
         SET_REG_FIELD(pConfig, VGT_SHADER_STAGES_EN, ES_EN, ES_STAGE_REAL);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageVertex);
-        SetShaderHash(ShaderStageVertex, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageVertex);
+        SetShaderHash(ShaderStageVertex, hash);
+
 #if PAL_CLIENT_INTERFACE_MAJOR_VERSION < 473
         const auto pIntfData = pContext->GetShaderInterfaceData(ShaderStageVertex);
         if (pIntfData->vbTable.resNodeIdx != InvalidValue)
@@ -326,8 +340,8 @@ Result ConfigBuilder::BuildPipelineVsGsFsRegConfig(
 
         SET_REG_FIELD(pConfig, VGT_SHADER_STAGES_EN, GS_EN, GS_STAGE_ON);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageGeometry);
-        SetShaderHash(ShaderStageGeometry, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageGeometry);
+        SetShaderHash(ShaderStageGeometry, hash);
 
 #if PAL_CLIENT_INTERFACE_MAJOR_VERSION < 473
         const auto pIntfData = pContext->GetShaderInterfaceData(ShaderStageGeometry);
@@ -342,8 +356,8 @@ Result ConfigBuilder::BuildPipelineVsGsFsRegConfig(
     {
         result = BuildPsRegConfig<PipelineVsGsFsRegConfig>(pContext, ShaderStageFragment, pConfig);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageFragment);
-        SetShaderHash(ShaderStageFragment, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageFragment);
+        SetShaderHash(ShaderStageFragment, hash);
     }
 
     if ((result == Result::Success) && (stageMask & ShaderStageToMask(ShaderStageCopyShader)))
@@ -379,7 +393,11 @@ Result ConfigBuilder::BuildPipelineVsTsGsFsRegConfig(
 
     const uint32_t stageMask = pContext->GetShaderStageMask();
 
-    uint64_t hash64 = 0;
+#if LLPC_CLIENT_INTERFACE_MAJOR_VERSION >= 35
+    ShaderHash hash = {};
+#else
+    ShaderHash hash = 0;
+#endif
 
     uint8_t* pAllocBuf = new uint8_t[sizeof(PipelineVsTsGsFsRegConfig)];
     PipelineVsTsGsFsRegConfig* pConfig = reinterpret_cast<PipelineVsTsGsFsRegConfig*>(pAllocBuf);
@@ -400,8 +418,8 @@ Result ConfigBuilder::BuildPipelineVsTsGsFsRegConfig(
 
         SET_REG_FIELD(pConfig, VGT_SHADER_STAGES_EN, LS_EN, LS_STAGE_ON);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageVertex);
-        SetShaderHash(ShaderStageVertex, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageVertex);
+        SetShaderHash(ShaderStageVertex, hash);
 
 #if PAL_CLIENT_INTERFACE_MAJOR_VERSION < 473
         const auto pIntfData = pContext->GetShaderInterfaceData(ShaderStageVertex);
@@ -423,8 +441,8 @@ Result ConfigBuilder::BuildPipelineVsTsGsFsRegConfig(
 
         SET_REG_FIELD(pConfig, VGT_SHADER_STAGES_EN, HS_EN, HS_STAGE_ON);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageTessControl);
-        SetShaderHash(ShaderStageTessControl, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageTessControl);
+        SetShaderHash(ShaderStageTessControl, hash);
     }
 
     if ((result == Result::Success) && (stageMask & ShaderStageToMask(ShaderStageTessEval)))
@@ -433,8 +451,8 @@ Result ConfigBuilder::BuildPipelineVsTsGsFsRegConfig(
 
         SET_REG_FIELD(pConfig, VGT_SHADER_STAGES_EN, ES_EN, ES_STAGE_DS);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageTessEval);
-        SetShaderHash(ShaderStageTessEval, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageTessEval);
+        SetShaderHash(ShaderStageTessEval, hash);
     }
 
     if ((result == Result::Success) && (stageMask & ShaderStageToMask(ShaderStageGeometry)))
@@ -443,8 +461,9 @@ Result ConfigBuilder::BuildPipelineVsTsGsFsRegConfig(
 
         SET_REG_FIELD(pConfig, VGT_SHADER_STAGES_EN, GS_EN, GS_STAGE_ON);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageGeometry);
-        SetShaderHash(ShaderStageGeometry, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageGeometry);
+        SetShaderHash(ShaderStageGeometry, hash);
+
 #if PAL_CLIENT_INTERFACE_MAJOR_VERSION < 473
         const auto pIntfData = pContext->GetShaderInterfaceData(ShaderStageGeometry);
         if (pIntfData->streamOutTable.resNodeIdx != InvalidValue)
@@ -458,8 +477,8 @@ Result ConfigBuilder::BuildPipelineVsTsGsFsRegConfig(
     {
         result = BuildPsRegConfig<PipelineVsTsGsFsRegConfig>(pContext, ShaderStageFragment, pConfig);
 
-        hash64 = pContext->GetShaderHashCode(ShaderStageFragment);
-        SetShaderHash(ShaderStageFragment, hash64);
+        hash = pContext->GetShaderHashCode(ShaderStageFragment);
+        SetShaderHash(ShaderStageFragment, hash);
     }
 
     if ((result == Result::Success) && (stageMask & ShaderStageToMask(ShaderStageCopyShader)))
@@ -510,7 +529,11 @@ Result ConfigBuilder::BuildPipelineCsRegConfig(
 
     LLPC_ASSERT(pContext->GetShaderStageMask() == ShaderStageToMask(ShaderStageCompute));
 
-    uint64_t hash64 = 0;
+#if LLPC_CLIENT_INTERFACE_MAJOR_VERSION >= 35
+    ShaderHash hash = {};
+#else
+    ShaderHash hash = 0;
+#endif
 
     uint8_t* pAllocBuf = new uint8_t[sizeof(PipelineCsRegConfig)];
     PipelineCsRegConfig* pConfig = reinterpret_cast<PipelineCsRegConfig*>(pAllocBuf);
@@ -527,8 +550,8 @@ Result ConfigBuilder::BuildPipelineCsRegConfig(
 
     result = BuildCsRegConfig(pContext, ShaderStageCompute, pConfig);
 
-    hash64 = pContext->GetShaderHashCode(ShaderStageCompute);
-    SetShaderHash(ShaderStageCompute, hash64);
+    hash = pContext->GetShaderHashCode(ShaderStageCompute);
+    SetShaderHash(ShaderStageCompute, hash);
 
     LLPC_ASSERT((ppConfig != nullptr) && (pConfigSize != nullptr));
     *ppConfig = pAllocBuf;

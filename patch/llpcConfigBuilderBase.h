@@ -59,7 +59,7 @@ protected:
     void SetIndirectTableEntry(uint32_t value);
     void SetStreamOutTableEntry(uint32_t value);
 #endif
-    void SetShaderHash(ShaderStage apiStage, uint64_t hash64);
+    void SetShaderHash(ShaderStage apiStage, ShaderHash hash);
     void SetNumAvailSgprs(Util::Abi::HardwareStage hwStage, uint32_t value);
     void SetNumAvailVgprs(Util::Abi::HardwareStage hwStage, uint32_t value);
     void SetUsesViewportArrayIndex(bool useViewportIndex);

@@ -281,10 +281,11 @@ public:
         return m_pPipelineContext->GetCacheHashCode();
     }
 
-    uint64_t GetShaderHashCode(ShaderStage shaderStage) const
+    ShaderHash GetShaderHashCode(ShaderStage shaderStage) const
     {
         return m_pPipelineContext->GetShaderHashCode(shaderStage);
     }
+
 
     // Sets triple and data layout in specified module from the context's target machine.
     void SetModuleTargetMachine(llvm::Module* pModule);

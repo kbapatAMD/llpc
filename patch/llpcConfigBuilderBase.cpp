@@ -208,13 +208,40 @@ msgpack::MapDocNode ConfigBuilderBase::GetHwShaderNode(
 // =====================================================================================================================
 // Set an API shader's hash in metadata
 void ConfigBuilderBase::SetShaderHash(
-    ShaderStage apiStage, // API shader stage
-    uint64_t    hash64)   // Its hash
+    ShaderStage   apiStage, // API shader stage
+    ShaderHash    hash)  // Its hash
 {
+#if LLPC_CLIENT_INTERFACE_MAJOR_VERSION >= 35
+    // 128-bit hash
     if (GeneratingMsgPack())
     {
         auto hashNode = GetApiShaderNode(uint32_t(apiStage))[Util::Abi::ShaderMetadataKey::ApiShaderHash].getArray(true);
-        hashNode[0] = hashNode.getDocument()->getNode(hash64);
+        hashNode[0] = hashNode.getDocument()->getNode(hash.lower);
+        hashNode[1] = hashNode.getDocument()->getNode(hash.upper);
+    }
+    else
+    {
+        static const uint32_t hashKeys[] =
+        {
+            // In ShaderStage order
+            mmAPI_VS_HASH_DWORD0,
+            mmAPI_HS_HASH_DWORD0,
+            mmAPI_DS_HASH_DWORD0,
+            mmAPI_GS_HASH_DWORD0,
+            mmAPI_PS_HASH_DWORD0,
+            mmAPI_CS_HASH_DWORD0
+        };
+        SetPseudoRegister(hashKeys[apiStage], uint32_t(hash.lower));
+        SetPseudoRegister(hashKeys[apiStage] + 1, uint32_t(hash.lower >> 32));
+        SetPseudoRegister(hashKeys[apiStage] + 2, uint32_t(hash.upper));
+        SetPseudoRegister(hashKeys[apiStage] + 3, uint32_t(hash.upper >> 32));
+    }
+#else
+    // 64-bit hash
+    if (GeneratingMsgPack())
+    {
+        auto hashNode = GetApiShaderNode(uint32_t(apiStage))[Util::Abi::ShaderMetadataKey::ApiShaderHash].getArray(true);
+        hashNode[0] = hashNode.getDocument()->getNode(hash);
         hashNode[1] = hashNode.getDocument()->getNode(0U);
     }
     else
@@ -229,9 +256,10 @@ void ConfigBuilderBase::SetShaderHash(
             mmAPI_PS_HASH_DWORD0,
             mmAPI_CS_HASH_DWORD0
         };
-        SetPseudoRegister(hashKeys[apiStage], uint32_t(hash64));
-        SetPseudoRegister(hashKeys[apiStage] + 1, uint32_t(hash64 >> 32));
+        SetPseudoRegister(hashKeys[apiStage], uint32_t(hash));
+        SetPseudoRegister(hashKeys[apiStage] + 1, uint32_t(hash >> 32));
     }
+#endif
 }
 
 // =====================================================================================================================
